@@ -50,7 +50,7 @@ function Navbar() {
   };
 
   return (
-    <aside className="w-64 h-screen bg-white dark:bg-gray-900 shadow-md p-4 flex flex-col">
+    <aside className="w-64 min-h-screen bg-white dark:bg-gray-900 shadow-md p-4 flex flex-col">
         <Link to='/'>
       <div className="mb-8 text-blue-600 dark:text-blue-400 font-bold text-xl cursor-pointer">
         MeroLawyer
