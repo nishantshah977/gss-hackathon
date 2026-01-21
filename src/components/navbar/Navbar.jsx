@@ -17,17 +17,12 @@ const navItems = [
   },
   {
     label: "Ask About Constitution",
-    href: "/constitution",
+    href: "/chat",
     icon: FaClipboardList,
   },
   {
-    label: "Ask About Documents",
-    href: "/documents",
-    icon: FaCalendarAlt,
-  },
-  {
     label: "Compare Documents",
-    href: "/compare",
+    href: "/documents",
     icon: FaBook,
   },
 ];
