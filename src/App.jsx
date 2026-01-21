@@ -1,17 +1,19 @@
-import { useState } from 'react'
-import { Home, Navbar } from './components'
-import { BrowserRouter, Route, Routes } from 'react-router'
+import { BrowserRouter, Routes, Route } from 'react-router'
+import Layout from './Layout'
+import Home from './components/home/Home'
+// import Compare from './components/Compare'
+// import Clear from './components/Clear'
 
 function App() {
-
   return (
     <BrowserRouter>
-      <Navbar />
       <Routes>
-        <Route path='/' element={<Home />}/>
-        {/* <Route path='/compare' element={<Compare />}/> */}
-        {/* <Route path='/constitution' element={<Clear />}/> */}
-        {/* <Route path='/documents' element={<Clear />}/> */}
+        <Route element={<Layout />}>
+          <Route path='/' element={<Home />} />
+          <Route path='/compare'/>
+          <Route path='/constitution' />
+          <Route path='/documents'/>
+        </Route>
       </Routes>
     </BrowserRouter>
   )

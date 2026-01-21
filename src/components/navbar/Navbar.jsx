@@ -1,99 +1,104 @@
-import React, { useEffect, useState } from 'react';
-import { FaHome, FaBook, FaClipboardList, FaCalendarAlt } from "react-icons/fa";
-import { Link } from 'react-router';
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router";
+import {
+  FaHome,
+  FaBook,
+  FaClipboardList,
+  FaCalendarAlt,
+} from "react-icons/fa";
 import { MdLightMode, MdDarkMode } from "react-icons/md";
-import NepaliDate from 'nepali-date-converter';
+import NepaliDate from "nepali-date-converter";
+
+const navItems = [
+  {
+    label: "Dashboard",
+    href: "/",
+    icon: FaHome,
+  },
+  {
+    label: "Ask About Constitution",
+    href: "/constitution",
+    icon: FaClipboardList,
+  },
+  {
+    label: "Ask About Documents",
+    href: "/documents",
+    icon: FaCalendarAlt,
+  },
+  {
+    label: "Compare Documents",
+    href: "/compare",
+    icon: FaBook,
+  },
+];
 
 function Navbar() {
   const [lightTheme, setLightTheme] = useState(true);
-  const todayDate = new NepaliDate()
+  const location = useLocation();
+  const today = new NepaliDate();
+
   useEffect(() => {
-    const storedTheme = localStorage.getItem('lightTheme');
+    const storedTheme = localStorage.getItem("lightTheme");
     const isLight = storedTheme ? JSON.parse(storedTheme) : true;
 
     setLightTheme(isLight);
-
-    if (!isLight) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    document.documentElement.classList.toggle("dark", !isLight);
   }, []);
 
   const handleToggle = () => {
-    setLightTheme(prev => {
-      const nextTheme = !prev;
-
-      if (nextTheme) {
-        document.documentElement.classList.remove('dark');
-      } else {
-        document.documentElement.classList.add('dark');
-      }
-
-      localStorage.setItem('lightTheme', JSON.stringify(nextTheme));
-      return nextTheme;
+    setLightTheme((prev) => {
+      const next = !prev;
+      document.documentElement.classList.toggle("dark", !next);
+      localStorage.setItem("lightTheme", JSON.stringify(next));
+      return next;
     });
   };
 
   return (
     <aside className="w-64 h-screen bg-white dark:bg-gray-900 shadow-md p-4 flex flex-col">
-      
-      <div className="mb-8 flex items-center">
-        <div className="text-blue-600 dark:text-blue-400 font-bold text-xl">
-          MeroLawyer
-        </div>
+        <Link to='/'>
+      <div className="mb-8 text-blue-600 dark:text-blue-400 font-bold text-xl cursor-pointer">
+        MeroLawyer
       </div>
+      </Link>
 
-      <nav className="flex flex-col gap-4 flex-1">
-        <Link
-          to="/"
-          className="flex items-center gap-3 text-gray-700 dark:text-gray-300 
-                     hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-        >
-          <FaHome />
-          Dashboard
-        </Link>
+      <nav className="flex flex-col gap-1 flex-1">
+        {navItems.map(({ label, href, icon: Icon }) => {
+          const isActive = location.pathname === href;
 
-        <Link
-          to="/constitution"
-          className="flex items-center gap-3 text-gray-700 dark:text-gray-300 
-                     hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-        >
-          <FaClipboardList />
-          Ask About Constitution
-        </Link>
-
-        <Link
-          to="/documents"
-          className="flex items-center gap-3 text-gray-700 dark:text-gray-300 
-                     hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-        >
-          <FaCalendarAlt />
-          Ask About Documents
-        </Link>
-
-        <Link
-          to="/compare"
-          className="flex items-center gap-3 text-gray-700 dark:text-gray-300 
-                     hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-        >
-          <FaBook />
-          Compare Documents
-        </Link>
+          return (
+            <Link
+              key={label}
+              to={href}
+              className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors
+                ${
+                  isActive
+                    ? "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
+                    : "text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                }`}
+            >
+              <Icon />
+              <span className="text-sm font-medium">{label}</span>
+            </Link>
+          );
+        })}
       </nav>
-        <div className='flex flex-col gap-5 mb-2'>
-      <button
-        onClick={handleToggle}
-        className="mt-6 flex items-center gap-2 text-gray-700 dark:text-gray-300
-                   hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-      >
-        {lightTheme ? <MdDarkMode size={22} /> : <MdLightMode size={22} />}
-        <span className="text-sm">
-          {lightTheme ? 'Dark Mode' : 'Light Mode'}
-        </span>
-      </button>
-      <p className='text-gray-700 dark:text-gray-300 ps-3'>{todayDate.getYear()} / {todayDate.getMonth()} / {todayDate.getDay()}
-      </p>
+
+      <div className="flex flex-col gap-4">
+        <button
+          onClick={handleToggle}
+          className="flex items-center gap-2 px-3 py-2 text-gray-700 dark:text-gray-300
+                     hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        >
+          {lightTheme ? <MdDarkMode size={20} /> : <MdLightMode size={20} />}
+          <span className="text-sm">
+            {lightTheme ? "Dark Mode" : "Light Mode"}
+          </span>
+        </button>
+
+        <p className="text-sm text-gray-600 dark:text-gray-400 px-3">
+          {today.getYear()} / {today.getMonth() + 1} / {today.getDate()}
+        </p>
       </div>
     </aside>
   );
