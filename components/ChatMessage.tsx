@@ -39,7 +39,7 @@ export const TypingIndicator: React.FC<{ isDark: boolean; ui: UITokens }> = ({
   return (
     <div className={`flex gap-4 ${isDark ? "text-white" : "text-black"}`}>
       <div
-        className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${ui.selectionSoft}`}
+        className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 mt-1 ${ui.selectionSoft}`}
       >
         <Scale size={18} className="text-blue-600" />
       </div>
@@ -104,7 +104,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
   return (
     <div className={`flex gap-4 ${isDark ? "text-white" : "text-black"}`}>
       <div
-        className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${ui.selectionSoft}`}
+        className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 mt-1 ${ui.selectionSoft}`}
       >
         <Scale size={18} className="text-blue-600" />
       </div>

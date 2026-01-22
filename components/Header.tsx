@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { TabType, UITokens } from "@/types";
+import GoogleTranslateWidget from "@/app/GoogleTranslate";
 
 interface HeaderProps {
   activeTab: TabType;
@@ -26,7 +27,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, now, ui }) => {
   return (
     <header className={`${ui.bgSecondary} border-b ${ui.border} px-6 py-5`}>
       <div className="flex items-center justify-between gap-4">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h1 className={`text-2xl font-bold ${ui.textPrimary}`}>
             {activeTab === "chat" ? "Mero Lawyer" : "Documents"}
           </h1>
@@ -37,11 +38,15 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, now, ui }) => {
           </p>
         </div>
 
-        <div className="text-right flex-shrink-0">
-          <div className={`text-sm font-semibold ${ui.textPrimary}`}>
-            {time}
+        <div className="flex items-center gap-4 shrink-0">
+          <GoogleTranslateWidget />
+          
+          <div className="text-right">
+            <div className={`text-sm font-semibold ${ui.textPrimary}`}>
+              {time}
+            </div>
+            <div className={`text-xs ${ui.textSecondary}`}>{date}</div>
           </div>
-          <div className={`text-xs ${ui.textSecondary}`}>{date}</div>
         </div>
       </div>
     </header>

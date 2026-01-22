@@ -1,6 +1,7 @@
 import React from "react";
 import { Scale, MessageSquare, FileText, Sun, Moon } from "lucide-react";
 import { Theme, TabType, UITokens } from "@/types";
+import Link from "next/link";
 
 interface SidebarProps {
   activeTab: TabType;
@@ -21,7 +22,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     className={`w-20 ${ui.bgSecondary} border-r ${ui.border} flex flex-col items-center py-6 gap-6`}
   >
     <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center">
+      <Link href="/">
       <Scale className="w-6 h-6 text-white" />
+      </Link>
     </div>
 
     <div className="flex-1 flex flex-col gap-3">

@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowUp } from "lucide-react";
 import { SubTabType, UITokens } from "@/types";
+import GoogleTranslate from "next-google-translate-widget";
 
 interface ChatInputProps {
   value: string;
