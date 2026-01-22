@@ -23,7 +23,9 @@ export const ViewModal: React.FC<ViewModalProps> = ({
   isDark,
   ui,
 }) => (
-  <div className="fixed inset-0 z-50 bg-black/55 flex items-center justify-center p-4">
+  <div
+    className={`fixed ${isDark ? "text-white" : "text-black"} inset-0 z-50 bg-black/55 flex items-center justify-center p-4`}
+  >
     <div
       className={`${ui.bgSecondary} ${ui.shadowCard} border ${ui.border} w-full max-w-3xl rounded-3xl overflow-hidden`}
     >

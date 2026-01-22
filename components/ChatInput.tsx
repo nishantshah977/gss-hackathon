@@ -29,7 +29,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Ask a question... (Enter to send, Shift+Enter for new line)"
+          placeholder="Ask a question..."
           className={`
     flex-1
     bg-transparent

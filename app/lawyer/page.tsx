@@ -13,9 +13,11 @@ import { ChatArea } from "@/components/ChatArea";
 import { ChatInput } from "@/components/ChatInput";
 import { DocumentsTab } from "@/components/DocumentsTab";
 import { api } from "@/utils/api";
-import { simulateStreaming } from "@/utils/streaming";
+import { useSearchParams } from "next/navigation";
 
 export default function MeroLawyer() {
+  const searchParams = useSearchParams();
+
   const { theme, setTheme, isDark, ui } = useTheme("light");
   const { notification, showNotification } = useNotification();
 
@@ -28,7 +30,7 @@ export default function MeroLawyer() {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
-  const [streamingMessage, setStreamingMessage] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
 
   const [now, setNow] = useState<Date>(new Date());
 
@@ -42,10 +44,28 @@ export default function MeroLawyer() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const chatUploadRef = useRef<HTMLInputElement | null>(null);
   const docsUploadRef = useRef<HTMLInputElement | null>(null);
+  const currentMessageRef = useRef("");
 
   useEffect(() => {
     fetchDocuments();
   }, []);
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+
+    if (tab === "compare") {
+      setActiveTab("chat");
+      setActiveSubTab("compare");
+    } else if (tab === "law") {
+      setActiveTab("chat");
+      setActiveSubTab("law");
+    } else if (tab === "ask") {
+      setActiveTab("chat");
+      setActiveSubTab("ask");
+    } else if (tab === "docs") {
+      setActiveTab("documents");
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000);
@@ -54,7 +74,7 @@ export default function MeroLawyer() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, streamingMessage]);
+  }, [messages, isStreaming]);
 
   const fetchDocuments = async () => {
     try {
@@ -156,7 +176,7 @@ export default function MeroLawyer() {
   };
 
   const handleSendMessage = async () => {
-    if (!input.trim() || loading) return;
+    if (!input.trim() || loading || isStreaming) return;
 
     const q = input.trim();
     const userMsg: ChatMsg = {
@@ -167,59 +187,98 @@ export default function MeroLawyer() {
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setLoading(true);
-    setStreamingMessage("");
+    setIsStreaming(true);
+    currentMessageRef.current = "";
 
     try {
-      let data;
-
-      if (activeSubTab === "ask") {
-        if (selectedDocs.length === 0) {
-          showNotification("Select documents first.", "error");
+      const callbacks = {
+        onMetadata: (meta: any) => {
+          // Hide loading indicator when metadata arrives
           setLoading(false);
-          return;
-        }
-        data = await api.askQuestion(selectedDocs, q);
-      } else if (activeSubTab === "compare") {
-        if (selectedDocs.length < 2) {
-          showNotification("Select at least 2 documents to compare.", "error");
-          setLoading(false);
-          return;
-        }
-        data = await api.compareDocuments(selectedDocs, q);
-      } else {
-        data = await api.askLawQuestion(q);
-      }
 
-      if (!data?.success) {
-        showNotification("Request failed", "error");
-        setLoading(false);
-        return;
-      }
+          const sources = meta.sources_referenced || meta.documents_used || [];
 
-      const responseText: string = data.answer || data.comparison_result || "";
-      const sources: string[] =
-        data.documents_used || data.sources_referenced || [];
-
-      simulateStreaming(responseText, (streamed) => {
-        if (streamed === null) {
+          // Add initial empty assistant message with metadata
           setMessages((prev) => [
             ...prev,
             {
               role: "assistant",
-              content: responseText,
+              content: "",
+              timestamp: new Date(),
+              metadata: meta,
               sources,
+            },
+          ]);
+        },
+        onContent: (content: string) => {
+          currentMessageRef.current += content;
+
+          // Update the last message with streaming content
+          setMessages((prev) => {
+            const updated = [...prev];
+            const lastMsg = updated[updated.length - 1];
+            if (lastMsg && lastMsg.role === "assistant") {
+              lastMsg.content = currentMessageRef.current;
+            }
+            return updated;
+          });
+        },
+        onDone: () => {
+          setIsStreaming(false);
+          setLoading(false);
+          currentMessageRef.current = "";
+        },
+        onError: (error: string) => {
+          setIsStreaming(false);
+          setLoading(false);
+
+          // Add error message
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: `❌ **Error:** ${error}\n\nPlease try again or rephrase your question.`,
               timestamp: new Date(),
             },
           ]);
-          setStreamingMessage("");
+
+          showNotification(error, "error");
+        },
+      };
+
+      // Call appropriate API based on active sub-tab
+      if (activeSubTab === "ask") {
+        if (selectedDocs.length === 0) {
+          showNotification("Select documents first.", "error");
           setLoading(false);
-        } else {
-          setStreamingMessage(streamed);
+          setIsStreaming(false);
+          return;
         }
-      });
-    } catch {
-      showNotification("Request failed", "error");
+        await api.askQuestion(selectedDocs, q, callbacks);
+      } else if (activeSubTab === "compare") {
+        if (selectedDocs.length < 2) {
+          showNotification("Select at least 2 documents to compare.", "error");
+          setLoading(false);
+          setIsStreaming(false);
+          return;
+        }
+        await api.compareDocuments(selectedDocs, q, callbacks);
+      } else if (activeSubTab === "law") {
+        await api.askLawQuestion(q, "nepal", callbacks, 5);
+      }
+    } catch (error: any) {
+      setIsStreaming(false);
       setLoading(false);
+      showNotification(error.message || "Request failed", "error");
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: `❌ **Error:** ${error.message}\n\nPlease check your inputs and try again.`,
+          timestamp: new Date(),
+        },
+      ]);
     }
   };
 
@@ -267,7 +326,7 @@ export default function MeroLawyer() {
                   )
                 }
                 onUpload={() => chatUploadRef.current?.click()}
-                loading={loading}
+                loading={loading || isStreaming}
                 isDark={isDark}
                 ui={ui}
                 uploadRef={chatUploadRef}
@@ -284,7 +343,8 @@ export default function MeroLawyer() {
               <section className="flex-1 flex flex-col min-w-0 min-h-0">
                 <ChatArea
                   messages={messages}
-                  streamingMessage={streamingMessage}
+                  isStreaming={isStreaming}
+                  showTyping={loading && !isStreaming}
                   activeSubTab={activeSubTab}
                   isDark={isDark}
                   ui={ui}
@@ -295,7 +355,7 @@ export default function MeroLawyer() {
                   value={input}
                   onChange={setInput}
                   onSend={handleSendMessage}
-                  loading={loading}
+                  loading={loading || isStreaming}
                   selectedDocsCount={selectedDocs.length}
                   activeSubTab={activeSubTab}
                   ui={ui}
@@ -311,6 +371,7 @@ export default function MeroLawyer() {
                 accept=".pdf,.png,.jpg,.jpeg,.txt,.md"
                 onChange={handleDocsUpload}
               />
+
               <DocumentsTab
                 documents={documents}
                 onUpload={() => docsUploadRef.current?.click()}
@@ -318,7 +379,6 @@ export default function MeroLawyer() {
                 onDelete={handleDeleteDoc}
                 loading={loading}
                 ui={ui}
-                uploadRef={docsUploadRef}
               />
             </>
           )}

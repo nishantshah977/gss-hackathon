@@ -1,14 +1,11 @@
 import React from "react";
-import { Scale } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { ChatMsg, SubTabType, UITokens } from "@/types";
-import { ChatMessage } from "./ChatMessage";
-import Spline from "@splinetool/react-spline";
+import { ChatMessage, TypingIndicator } from "@/components/ChatMessage";
 
 interface ChatAreaProps {
   messages: ChatMsg[];
-  streamingMessage: string;
+  isStreaming: boolean;
+  showTyping: boolean;
   activeSubTab: SubTabType;
   isDark: boolean;
   ui: UITokens;
@@ -17,72 +14,70 @@ interface ChatAreaProps {
 
 export const ChatArea: React.FC<ChatAreaProps> = ({
   messages,
-  streamingMessage,
+  isStreaming,
+  showTyping,
   activeSubTab,
   isDark,
   ui,
   messagesEndRef,
-}) => (
-  <div className={`flex-1 min-h-0 overflow-y-auto p-6 ${ui.bgPrimary}`}>
-    {messages.length === 0 && !streamingMessage && (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <div
-            className={`w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 ${ui.selectionSoft}`}
-          >
-            <Scale className="w-10 h-10 text-blue-600" />
-          </div>
-          <h2 className={`text-2xl font-bold mb-3 ${ui.textPrimary}`}>
-            {activeSubTab === "ask" && "Ask About Your Documents"}
-            {activeSubTab === "compare" && "Compare Documents"}
-            {activeSubTab === "law" && "Legal AI Assistant"}
-          </h2>
-          <p className={ui.textSecondary}>
-            {activeSubTab === "ask" &&
-              "Select documents on the left and ask questions grounded in them."}
-            {activeSubTab === "compare" &&
-              "Select 2+ documents to compare differences and conflicts."}
-            {activeSubTab === "law" &&
-              "Ask general legal questions (no document grounding)."}
-          </p>
-        </div>
-      </div>
-    )}
-
-    <div className="max-w-3xl mx-auto space-y-6">
-      {messages.map((msg, idx) => (
-        <div
-          key={idx}
-          className="animate-in slide-in-from-bottom-3 duration-300"
-        >
-          <ChatMessage msg={msg} isDark={isDark} ui={ui} />
-        </div>
-      ))}
-
-      {streamingMessage && (
-        <div className="flex gap-3 animate-in fade-in duration-200">
-          <div
-            className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${ui.selectionSoft}`}
-          >
-            <Scale size={18} className="text-blue-600" />
-          </div>
-          <div className="flex-1 min-w-0">
+}) => {
+  return (
+    <div className="flex-1 overflow-y-auto px-4 py-6 space-y-6">
+      {messages.length === 0 && (
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center max-w-md">
             <div
-              className={`${ui.bgSecondary} rounded-3xl rounded-tl-md px-5 py-4 border ${ui.border} ${ui.shadowCard}`}
+              className={`w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center ${ui.selectionSoft}`}
             >
-              <div
-                className={`prose max-w-none ${isDark ? "prose-invert" : ""}`}
+              <svg
+                className="w-8 h-8 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {streamingMessage + "\n\n▍"}
-                </ReactMarkdown>
-              </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"
+                />
+              </svg>
             </div>
+            <h3 className={`text-xl font-semibold mb-2 ${ui.textPrimary}`}>
+              {activeSubTab === "law"
+                ? "Ask Legal Questions"
+                : activeSubTab === "compare"
+                  ? "Compare Documents"
+                  : "Analyze Your Documents"}
+            </h3>
+            <p className={`text-sm ${ui.textSecondary}`}>
+              {activeSubTab === "law"
+                ? "Search through Nepal's legal database for answers to your legal questions"
+                : activeSubTab === "compare"
+                  ? "Select at least 2 documents to compare their provisions and terms"
+                  : "Upload documents and ask questions to get AI-powered legal analysis"}
+            </p>
           </div>
         </div>
       )}
-    </div>
 
-    <div ref={messagesEndRef} />
-  </div>
-);
+      {messages.map((msg, idx) => (
+        <ChatMessage
+          key={idx}
+          msg={msg}
+          isDark={isDark}
+          ui={ui}
+          isStreaming={
+            isStreaming &&
+            idx === messages.length - 1 &&
+            msg.role === "assistant"
+          }
+        />
+      ))}
+
+      {showTyping && <TypingIndicator isDark={isDark} ui={ui} />}
+
+      <div ref={messagesEndRef} />
+    </div>
+  );
+};

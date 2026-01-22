@@ -9,7 +9,6 @@ interface DocumentsTabProps {
   onDelete: (id: string) => void;
   loading: boolean;
   ui: UITokens;
-  uploadRef: React.RefObject<HTMLInputElement | null>;
 }
 
 export const DocumentsTab: React.FC<DocumentsTabProps> = ({
@@ -19,20 +18,15 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
   onDelete,
   loading,
   ui,
-  uploadRef,
 }) => (
   <div className={`flex-1 min-h-0 overflow-y-auto p-8 ${ui.bgPrimary}`}>
     <div className="max-w-6xl mx-auto">
-      <div
+      <button
+        type="button"
         onClick={onUpload}
-        className={`${ui.bgSecondary} border-2 border-dashed ${ui.border} rounded-3xl p-10 text-center cursor-pointer hover:border-blue-600 transition-all duration-300 mb-8`}
+        disabled={loading}
+        className={`${ui.bgSecondary} border-2 border-dashed ${ui.border} rounded-3xl p-10 text-center w-full cursor-pointer hover:border-blue-600 transition-all duration-300 mb-8 disabled:opacity-60 disabled:cursor-not-allowed`}
       >
-        <input
-          ref={uploadRef}
-          type="file"
-          className="hidden"
-          accept=".pdf,.png,.jpg,.jpeg,.txt,.md"
-        />
         <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <Upload className="w-8 h-8 text-blue-600" />
         </div>
@@ -43,7 +37,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
         {loading && (
           <div className="mt-4 w-40 h-1 bg-blue-600 mx-auto rounded-full animate-pulse" />
         )}
-      </div>
+      </button>
 
       <div>
         <h2 className={`text-xl font-bold mb-6 ${ui.textPrimary}`}>
@@ -85,6 +79,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
 
               <div className="flex items-center gap-2 mt-4">
                 <button
+                  type="button"
                   onClick={() => onView(doc)}
                   className={`flex-1 px-3 py-2 rounded-lg ${ui.bgTertiary} ${ui.hoverSoft} text-sm font-semibold ${ui.textPrimary}`}
                 >
@@ -92,6 +87,7 @@ export const DocumentsTab: React.FC<DocumentsTabProps> = ({
                   View
                 </button>
                 <button
+                  type="button"
                   onClick={() => onDelete(doc.id)}
                   className={`px-3 py-2 rounded-lg ${ui.bgTertiary} ${ui.hoverSoft} text-sm ${ui.textPrimary}`}
                   title="Delete"
