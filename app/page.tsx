@@ -4,18 +4,18 @@ import { Scale, FileText, MessageSquare, ArrowRight } from "lucide-react";
 
 export default function HomePage() {
   return (
-    <main className="h-screen flex flex-col overflow-hidden">
+    <main className="h-screen flex flex-col overflow-hidden bg-white">
       {/* Header */}
-      <header className="bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800">
+      <header className="bg-white backdrop-blur-md border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-neutral-900 dark:bg-white rounded-lg flex items-center justify-center">
-              <Scale className="w-5 h-5 text-white dark:text-neutral-900" />
+            <div className="w-8 h-8 bg-neutral-900 rounded-lg flex items-center justify-center">
+              <Scale className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-semibold">Mero Lawyer</span>
+            <span className="text-lg font-semibold text-neutral-900">Mero Lawyer</span>
           </div>
           <Link href="/lawyer">
-            <button className="px-5 py-2 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-100 transition">
+            <button className="px-5 py-2 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-neutral-800 transition">
               Get Started
             </button>
           </Link>
@@ -27,26 +27,26 @@ export default function HomePage() {
         <div className="w-full max-w-6xl">
           <div className="text-center space-y-8 mb-12">
             <div className="space-y-4">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900">
                 Legal clarity,
                 <br />
                 simplified
               </h1>
-              <p className="text-lg sm:text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
+              <p className="text-lg sm:text-xl text-neutral-600 max-w-2xl mx-auto">
                 Get clear answers to legal questions, analyze documents, and
                 understand constitutional matters with ease.
               </p>
             </div>
             <div className="flex flex-wrap gap-3 justify-center">
               <Link href="/lawyer">
-                <button className="flex items-center gap-2 px-6 py-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-medium rounded-lg hover:bg-neutral-800 dark:hover:bg-neutral-100 transition">
+                <button className="flex items-center gap-2 px-6 py-3 bg-neutral-900 text-white font-medium rounded-lg hover:bg-neutral-800 transition">
                   <Scale className="w-4 h-4" />
                   Start Chat
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </Link>
               <Link href="/lawyer?tab=compare">
-                <button className="flex items-center gap-2 px-6 py-3 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white font-medium rounded-lg border border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 transition">
+                <button className="flex items-center gap-2 px-6 py-3 bg-white text-neutral-900 font-medium rounded-lg border border-neutral-200 hover:border-neutral-300 transition">
                   <FileText className="w-4 h-4" />
                   Compare Documents
                 </button>
@@ -75,15 +75,15 @@ export default function HomePage() {
             ].map((feature, idx) => (
               <div
                 key={idx}
-                className="p-5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl hover:border-neutral-300 dark:hover:border-neutral-700 transition"
+                className="p-5 bg-white border border-neutral-200 rounded-xl hover:border-neutral-300 transition"
               >
-                <div className="w-10 h-10 bg-neutral-50 dark:bg-neutral-800 rounded-lg flex items-center justify-center mb-3">
-                  <feature.icon className="w-5 h-5 text-neutral-900 dark:text-white" />
+                <div className="w-10 h-10 bg-neutral-100 rounded-lg flex items-center justify-center mb-3">
+                  <feature.icon className="w-5 h-5 text-neutral-900" />
                 </div>
-                <h3 className="text-base font-semibold mb-1">
+                <h3 className="text-base font-semibold mb-1 text-neutral-900">
                   {feature.title}
                 </h3>
-                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                <p className="text-sm text-neutral-600">
                   {feature.description}
                 </p>
               </div>
@@ -93,21 +93,21 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-4 px-4 sm:px-6 lg:px-8 border-t border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md">
+      <footer className="py-4 px-4 sm:px-6 lg:px-8 border-t border-neutral-200 bg-white">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="text-sm text-neutral-600 dark:text-neutral-400">
-            © 2025 Mero Lawyer
+          <div className="text-sm text-neutral-600">
+            © 2026 Mero Lawyer
           </div>
           <div className="flex items-center gap-6">
             <a
               href="#"
-              className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition"
+              className="text-sm text-neutral-600 hover:text-neutral-900 transition"
             >
               Privacy
             </a>
             <a
               href="#"
-              className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition"
+              className="text-sm text-neutral-600 hover:text-neutral-900 transition"
             >
               Terms
             </a>
