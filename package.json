@@ -13,6 +13,7 @@
     "@splinetool/runtime": "^1.12.39",
     "lucide-react": "^0.562.0",
     "next": "16.1.4",
+    "next-google-translate-widget": "^1.0.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-markdown": "^10.1.0",

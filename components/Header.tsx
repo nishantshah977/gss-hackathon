@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { TabType, UITokens } from "@/types";
+import GoogleTranslate from "next-google-translate-widget";
 
 interface HeaderProps {
   activeTab: TabType;
@@ -21,8 +22,8 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, ui }) => {
   const { date, time } = useMemo(() => {
     if (!now) return { date: "—", time: "—" };
 
-    // Force a consistent locale + timezone to avoid server/client differences
-    const locale = "en-US";
+    // Deterministic timezone formatting
+    const locale = "en-NP";
     const timeZone = "Asia/Kathmandu";
 
     const date = new Intl.DateTimeFormat(locale, {
@@ -47,6 +48,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, ui }) => {
   return (
     <header className={`${ui.bgSecondary} border-b ${ui.border} px-6 py-5`}>
       <div className="flex items-center justify-between gap-4">
+        {/* Left: Title */}
         <div className="min-w-0">
           <h1 className={`text-2xl font-bold ${ui.textPrimary}`}>
             {activeTab === "chat" ? "Mero Lawyer" : "Documents"}
@@ -58,19 +60,29 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, ui }) => {
           </p>
         </div>
 
-        <div className="text-right flex-shrink-0">
-          {/* Suppress hydration warning just in case something still differs */}
-          <div
-            className={`text-sm font-semibold ${ui.textPrimary}`}
-            suppressHydrationWarning
-          >
-            {time}
+        {/* Right: Translate + Clock */}
+        <div className="flex items-center gap-4 flex-shrink-0">
+          <div className="translate-widget">
+            <GoogleTranslate
+              pageLanguage="en"
+              // Nepali first
+              includedLanguages="ne,en,hi"
+            />
           </div>
-          <div
-            className={`text-xs ${ui.textSecondary}`}
-            suppressHydrationWarning
-          >
-            {date}
+
+          <div className="text-right">
+            <div
+              className={`text-sm font-semibold ${ui.textPrimary}`}
+              suppressHydrationWarning
+            >
+              {time}
+            </div>
+            <div
+              className={`text-xs ${ui.textSecondary}`}
+              suppressHydrationWarning
+            >
+              {date}
+            </div>
           </div>
         </div>
       </div>
