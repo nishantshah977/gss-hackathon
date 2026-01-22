@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { TabType, UITokens } from "@/types";
-import GoogleTranslate from "next-google-translate-widget";
+import GoogleTranslateWidget from "@/app/GoogleTranslate";
 
 interface HeaderProps {
   activeTab: TabType;
@@ -48,8 +48,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, ui }) => {
   return (
     <header className={`${ui.bgSecondary} border-b ${ui.border} px-6 py-5`}>
       <div className="flex items-center justify-between gap-4">
-        {/* Left: Title */}
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h1 className={`text-2xl font-bold ${ui.textPrimary}`}>
             {activeTab === "chat" ? "Mero Lawyer" : "Documents"}
           </h1>
@@ -60,29 +59,14 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, ui }) => {
           </p>
         </div>
 
-        {/* Right: Translate + Clock */}
-        <div className="flex items-center gap-4 flex-shrink-0">
-          <div className="translate-widget">
-            <GoogleTranslate
-              pageLanguage="en"
-              // Nepali first
-              includedLanguages="ne,en,hi"
-            />
-          </div>
+        <div className="flex items-center gap-4 shrink-0">
+          <GoogleTranslateWidget />
 
           <div className="text-right">
-            <div
-              className={`text-sm font-semibold ${ui.textPrimary}`}
-              suppressHydrationWarning
-            >
+            <div className={`text-sm font-semibold ${ui.textPrimary}`}>
               {time}
             </div>
-            <div
-              className={`text-xs ${ui.textSecondary}`}
-              suppressHydrationWarning
-            >
-              {date}
-            </div>
+            <div className={`text-xs ${ui.textSecondary}`}>{date}</div>
           </div>
         </div>
       </div>
